@@ -1,0 +1,31 @@
+.reserve .van-nav-bar{
+  background:none;
+}
+.reserve .van-nav-bar__title,.reserve .van-icon-arrow-left{
+  color: #fff;
+}
+.reserve .van-hairline--bottom::after{
+  border: none;
+}
+
+.camera .van-uploader__wrapper{
+  display: flex;
+  justify-content: space-between;
+}
+.alluse .van-icon-arrow-left::before{
+  color: #B5B5B5;
+  font-size: 20px;
+}
+.alluse .van-hairline--bottom::after{
+  border-bottom: none;
+}
+.camera .van-uploader__preview{
+  /* width: 40%; */
+}
+.detail .van-hairline--top-bottom::after{
+  border-bottom: none;
+}
+
+.order .van-search__content{
+  background-color: #fff;
+}
