@@ -1,0 +1,470 @@
+<template>
+  <div class="book2 book_page">
+    <div class="bg">
+      <div class="small"></div>
+      <van-nav-bar
+        title="预定"
+        left-text
+        left-arrow
+        @click-left="onClickLeft"
+        @click-right="onClickRight"
+      >
+        <template #title>
+          <div class="book_title">
+            <span :class="isCheck===1?'isactive':''" @click="isCheck=1">预定同住</span>
+            <span :class="isCheck===2?'isactive':''" @click="isCheck=2">已定同住</span>
+          </div>
+        </template>
+      </van-nav-bar>
+      <div class="card">
+        <div>
+          <div class="img">
+            <img src="@/assets/img/hotel/i1.png" width="100%" height="100%" alt />
+          </div>
+          <div class="msg">
+            <p>如家福州金融界万达广场店</p>
+            <p>经典海景大床房</p>
+            <p style="margin-left:-5px">【35m² | 1.8m大床 | 带窗 | 小花园】</p>
+          </div>
+        </div>
+        <div>
+          <van-icon class="icon" name="calender-o" />06月15日 星期一 ~ 06月16日 星期二 | 住1晚
+        </div>
+      </div>
+      <div class="checkin">
+        <h3>入住信息</h3>
+        <div class="cell">
+          <div>房间数</div>
+          <div @click="roomDialog=true">
+            {{selectRoom}}间
+            <span>每间最多住2人</span>
+          </div>
+          <div>
+            <van-icon class="icon" name="arrow" />
+          </div>
+        </div>
+        <div class="cell">
+          <div>入住人</div>
+          <div>
+            <input type="text" placeholder="请输入实际入住人姓名" />
+          </div>
+        </div>
+        <div class="cell">
+          <div>手机号</div>
+          <div>
+            <input type="text" placeholder="用于接收确认短信" />
+          </div>
+        </div>
+        <div class="cell" @click="selectTogger">
+          <div>同住时间</div>
+          <div>
+            <span class="tag">{{toggle_Time}}小时</span>
+          </div>
+          <div>
+            <van-icon class="icon" name="arrow" />
+          </div>
+        </div>
+        <div class="cell" @click="sexDialog = true">
+          <div>性别要求</div>
+          <div>
+            <span class="tag">{{selectSex}}</span>
+          </div>
+          <div>
+            <van-icon class="icon" name="arrow" />
+          </div>
+        </div>
+        <div style="border-bottom:none" class="cell">
+          <div>到店时间</div>
+          <div>
+            <div @click="showmsg" class="msg">
+              <p>{{currentTime}}后办理入住</p>
+              <p>酒店将为您整完保留房间</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="quan checkin">
+        <h3>优惠券</h3>
+        <div class="cell">
+          <div>房间数</div>
+          <div>
+            <span>有两张优惠券可用</span>
+          </div>
+          <div>
+            <van-icon class="icon" name="arrow" />
+          </div>
+        </div>
+        <div style="border-bottom:none" class="cell">
+          <div>特殊要求</div>
+          <div>
+            <input type="text" placeholder="请输入您的特别要求" />
+          </div>
+        </div>
+      </div>
+      <div class="tag">
+        <p>备注:</p>
+        <p>1、平台只对任务单价范围做出担保，如产生额外费用或纠纷。平台概不负责，您接单即表示同意并遵守上述准则否则请勿接单。如果任务有违法行为请进行举报。</p>
+        <p>2、平台禁止任何形式的线下交易，一经查实立即冻结相关账号，余额不予返还，并给予举报者奖励</p>
+      </div>
+      <div class="footbar">
+        <div>
+          <p>
+            总计:
+            <span>
+              ¥
+              <strong>450</strong>
+            </span>
+          </p>
+          <p>开通会员即代表接受《会员服务协议》</p>
+        </div>
+        <div>支付并发布</div>
+      </div>
+      <!-- 到店时间 -->
+      <div v-show="flag" class="timepick">
+        <van-datetime-picker
+          v-model="currentTime"
+          type="time"
+          title="选择时间"
+          :min-hour="10"
+          :max-hour="20"
+          @confirm="confirm(1)"
+        />
+      </div>
+      <!-- 同住时间 -->
+      <div v-show="toggleTime" class="timepick">
+        <van-datetime-picker
+          v-model="toggle_Time"
+          type="time"
+          title="选择同住时间"
+          :min-hour="0"
+          :max-hour="12"
+          @confirm="confirm(2)"
+        />
+      </div>
+      <!-- 选择性别 -->
+      <div v-show="sexDialog" class="timepick">
+        <van-picker
+          title="选择性别"
+          show-toolbar
+          :columns="columns"
+          @confirm="onConfirmSex"
+          @cancel="onCancel"
+        />
+      </div>
+      <!-- 房间数 -->
+      <div v-show="roomDialog" class="timepick">
+        <van-picker
+          title="选择房间数"
+          show-toolbar
+          :columns="roomcolumns"
+          @confirm="onConfirmRoom"
+          @cancel="onCancel"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      currentTime: "12:00",
+      toggle_Time: "12:00",
+      flag: false,
+      isCheck: 1,
+      toggleTime: false,
+      columns: ["男", "女"],
+      roomcolumns: [1, 2, 3, 4, 5],
+      selectRoom: 1,
+      selectSex: "女",
+      roomDialog: false,
+      sexDialog: false
+    };
+  },
+  methods: {
+    onClickLeft() {},
+    onClickRight() {},
+    showmsg() {
+      this.flag = true;
+    },
+    confirm(value) {
+      // tag为2表示同住时间
+
+      if (value === 2) {
+        // console.log(this.currentTime);
+        this.toggleTime = false;
+      } else if (value === 1) {
+        this.flag = false;
+      }
+      // alert('ok')
+      // this.flag = false;
+    },
+    // 选择同住时间
+    selectTogger() {
+      this.toggleTime = true;
+    },
+    onConfirmSex(value) {
+      // console.log(value);
+      this.selectSex = value;
+      this.sexDialog = false;
+    },
+    onCancel() {
+      this.sexDialog = false;
+      this.roomDialog = false;
+    },
+    onConfirmRoom(value) {
+      this.selectRoom = value;
+      this.roomDialog = false;
+    }
+  }
+};
+</script>
+
+<style lang="less" scoped>
+.book2 {
+  font-size: 14px;
+  // position: relative;
+  height: 100%;
+  background: rgba(250, 250, 250, 1);
+  z-index: 3;
+  overflow: auto;
+  position: relative;
+  .timepick {
+    position: absolute;
+    width: 100%;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .bg {
+    width: 100%;
+    height: 100%;
+    // background:linear-gradient(180deg,rgba(0,160,233,1) 0%,rgba(110,197,236,0) 100%);
+    position: fixed;
+    top: 0;
+    overflow: auto;
+    z-index: 0;
+    padding-bottom: 50px;
+    .small {
+      width: 100%;
+      height: 240px;
+      background: linear-gradient(
+        180deg,
+        rgba(0, 160, 233, 1) 0%,
+        rgba(110, 197, 236, 0) 100%
+      );
+      position: absolute;
+      top: 0;
+      z-index: -1;
+    }
+  }
+}
+.card {
+  width: 95%;
+  // height: 120px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 10px 10px 0 10px;
+  // z-index: 5;
+  & > div:nth-child(1) {
+    display: flex;
+    height: 75px;
+    align-items: center;
+    border-bottom: 1px solid rgba(112, 112, 112, 0.1);
+    padding-bottom: 10px;
+    .img {
+      width: 60px;
+      height: 60px;
+    }
+    .msg {
+      flex-grow: 1;
+      padding-left: 10px;
+      & > p:nth-child(1) {
+        font-size: 15px;
+        color: #333;
+        font-weight: bold;
+      }
+      & > p:nth-child(2) {
+        font-size: 13px;
+        color: #b5b5b5;
+      }
+      & > p:nth-child(3) {
+        font-size: 13px;
+        color: #b5b5b5;
+        display: flex;
+        align-items: center;
+        span {
+          display: inline-block;
+          height: 12px;
+          line-height: 15px;
+          margin-right: 5px;
+          border-right: 1px solid #b5b5b5;
+          padding-right: 5px;
+          &:first-child {
+            margin-bottom: 10px;
+            border-right: none;
+          }
+          &:nth-child(2) {
+            // border-right: none;
+            padding-left: 5px;
+            border-left: 1px solid #b5b5b5;
+          }
+        }
+        & > span:last-child {
+          margin-right: 0;
+          border-right: none;
+        }
+      }
+    }
+  }
+  & > div:nth-child(2) {
+    display: flex;
+    // padding-top: 5px;
+    align-items: center;
+    color: #333;
+    padding: 2px 0;
+    .icon {
+      margin-right: 5px;
+      transform: scale(1.2);
+    }
+  }
+}
+.checkin {
+  width: 95%;
+  // height: 253px;
+  background-color: #fff;
+  margin: 0 auto;
+  margin-top: 10px;
+  border-radius: 5px;
+  padding: 0 10px;
+  // font-size: 14px;
+  // background-color: skyblue;
+  h3 {
+    font-size: 15px;
+    padding-top: 5px;
+    margin-bottom: -5px;
+  }
+  .cell {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(112, 112, 112, 0.1);
+    font-size: 14px;
+    color: #333333;
+    .tag {
+      color: #333 !important;
+    }
+    .icon {
+      margin-top: 10px;
+    }
+    & > div:nth-child(1) {
+      width: 75px;
+    }
+    & > div:nth-child(2) {
+      margin-right: auto;
+      span {
+        color: #b5b5b5;
+        margin-left: 5px;
+      }
+      input {
+        color: #b5b5b5;
+        margin-left: 5px;
+        &::placeholder {
+          color: #b5b5b5;
+        }
+      }
+      .msg {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-size: 13px;
+        color: #333333;
+        & > p:nth-child(2) {
+          color: #b5b5b5;
+          margin-top: -5px;
+        }
+      }
+    }
+    & > div:nth-child(3) {
+      color: #b5b5b5;
+    }
+  }
+}
+.tag {
+  width: 95%;
+  height: 158px;
+  margin: 0 auto;
+  font-size: 13px;
+  margin-top: 20px;
+  p {
+    color: #333333;
+  }
+  & > p:nth-child(1) {
+    color: #ff0000;
+  }
+}
+
+.footbar {
+  width: 100%;
+  height: 50px;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.16);
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  & > div:nth-child(1) {
+    margin-right: auto;
+    padding-left: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    & > p:nth-child(1) {
+      color: #333;
+      display: flex;
+      align-items: center;
+      span {
+        color: #0bb754;
+        margin-left: 8px;
+        strong {
+          font-size: 16px;
+        }
+      }
+    }
+    & > p:nth-child(2) {
+      color: #b5b5b5;
+      font-size: 12px;
+      margin-top: -5px;
+    }
+  }
+  & > div:nth-child(2) {
+    width: 120px;
+    height: 50px;
+    background: linear-gradient(
+      96deg,
+      rgba(0, 160, 233, 1) 0%,
+      rgba(78, 200, 255, 1) 100%
+    );
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+  }
+}
+
+.book_title {
+  color: #fff;
+  span {
+    margin: 0 5px;
+  }
+  .isactive {
+    font-size: 16px;
+    font-weight: bold;
+    // color: #000;
+    color: #fff;
+  }
+}
+</style>
